@@ -4,18 +4,18 @@ import os
 import importlib
 from datetime import datetime, timedelta
 from test.TestUtils import TestUtils
-
+ 
 def safely_import_module(module_name):
     """Safely import a module, returning None if import fails."""
     try:
         return importlib.import_module(module_name)
     except ImportError:
         return None
-
+ 
 def check_function_exists(module, function_name):
     """Check if a function exists in a module."""
     return hasattr(module, function_name) and callable(getattr(module, function_name))
-
+ 
 def safely_call_function(module, function_name, *args, **kwargs):
     """Safely call a function, returning None if it fails."""
     if not check_function_exists(module, function_name):
@@ -24,20 +24,20 @@ def safely_call_function(module, function_name, *args, **kwargs):
         return getattr(module, function_name)(*args, **kwargs)
     except Exception:
         return None
-
+ 
 def load_module_dynamically():
     """Load the student's module for testing"""
     module_obj = safely_import_module("skeleton")
     if module_obj is None:
         module_obj = safely_import_module("solution")
     return module_obj
-
+ 
 class TestBoundaryConditions(unittest.TestCase):
     def setUp(self):
         """Standard setup for all test methods"""
         self.test_obj = TestUtils()
         self.module_obj = load_module_dynamically()
-
+ 
     def test_boundary_conditions_comprehensive(self):
         """Comprehensive test for all boundary conditions and edge cases"""
         try:
@@ -45,7 +45,7 @@ class TestBoundaryConditions(unittest.TestCase):
                 self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                 print("TestBoundaryConditionsComprehensive = Failed")
                 return
-
+ 
             # Check all required functions exist
             required_functions = [
                 "convert_string_to_datetime",
@@ -55,17 +55,17 @@ class TestBoundaryConditions(unittest.TestCase):
                 "get_day_of_week",
                 "convert_timezone"
             ]
-            
+           
             missing_functions = []
             for func_name in required_functions:
                 if not check_function_exists(self.module_obj, func_name):
                     missing_functions.append(func_name)
-            
+           
             if missing_functions:
                 self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                 print("TestBoundaryConditionsComprehensive = Failed")
                 return
-
+ 
             # SECTION 1: DATE STRING CONVERSION BOUNDARY TESTS
             if check_function_exists(self.module_obj, "convert_string_to_datetime"):
                 # Test minimum and maximum dates
@@ -78,7 +78,7 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 future_date = safely_call_function(self.module_obj, "convert_string_to_datetime", "9999-12-31")
                 if future_date is None or not isinstance(future_date, datetime):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
@@ -88,7 +88,7 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 # Test leap year boundary
                 leap_date = safely_call_function(self.module_obj, "convert_string_to_datetime", "2024-02-29")
                 if leap_date is None or not isinstance(leap_date, datetime):
@@ -99,19 +99,19 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 # Test date with time
                 datetime_string = safely_call_function(self.module_obj, "convert_string_to_datetime", "2025-03-19 14:30:00")
                 if datetime_string is None or not isinstance(datetime_string, datetime):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-                if (datetime_string.year != 2025 or datetime_string.month != 3 or 
+                if (datetime_string.year != 2025 or datetime_string.month != 3 or
                     datetime_string.day != 19 or datetime_string.hour != 14 or datetime_string.minute != 30):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
             # SECTION 2: DATE DIFFERENCE CALCULATION BOUNDARY TESTS
             if check_function_exists(self.module_obj, "calculate_date_difference"):
                 # Test same date difference
@@ -125,7 +125,7 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 # Test negative date difference
                 start = datetime(2025, 3, 19)
                 end = datetime(2025, 3, 18)
@@ -138,7 +138,7 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 # Test string input handling
                 string_diff = safely_call_function(self.module_obj, "calculate_date_difference", "2025-03-19", "2025-03-26")
                 if string_diff is None or not isinstance(string_diff, dict):
@@ -149,7 +149,7 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 # Test large date difference
                 large_start = datetime(2000, 1, 1)
                 large_end = datetime(2025, 12, 31)
@@ -162,7 +162,7 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
             # SECTION 3: TIME DURATION ADDITION BOUNDARY TESTS
             if check_function_exists(self.module_obj, "add_time_duration"):
                 # Test zero duration
@@ -172,7 +172,7 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 # Test negative duration
                 negative_dt = safely_call_function(self.module_obj, "add_time_duration", dt, days=-1, hours=-2, minutes=-30)
                 if negative_dt is None or not isinstance(negative_dt, datetime):
@@ -184,7 +184,7 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 # Test string input handling
                 string_dt = safely_call_function(self.module_obj, "add_time_duration", "2025-03-19 12:00:00", days=1, hours=2)
                 if string_dt is None or not isinstance(string_dt, datetime):
@@ -196,14 +196,14 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 # Test large duration
                 large_dt = safely_call_function(self.module_obj, "add_time_duration", dt, days=365, hours=24, minutes=60)
                 if large_dt is None or not isinstance(large_dt, datetime) or large_dt.year != 2026:
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 # Test month/year boundary crossing
                 boundary_dt = safely_call_function(self.module_obj, "add_time_duration", "2025-01-31", days=31)
                 if boundary_dt is None or not isinstance(boundary_dt, datetime):
@@ -214,7 +214,7 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
             # SECTION 4: DAY OF WEEK BOUNDARY TESTS
             if check_function_exists(self.module_obj, "get_day_of_week"):
                 # Test weekday detection at year boundaries
@@ -223,13 +223,13 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 dec31 = safely_call_function(self.module_obj, "get_day_of_week", "2025-12-31")
                 if dec31 is None or not isinstance(dec31, str) or len(dec31) == 0:
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 # Test datetime object input
                 dt_input = datetime(2025, 3, 19)
                 weekday_dt = safely_call_function(self.module_obj, "get_day_of_week", dt_input)
@@ -237,21 +237,21 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 # Test leap year date
                 leap_weekday = safely_call_function(self.module_obj, "get_day_of_week", "2024-02-29")
                 if leap_weekday is None or not isinstance(leap_weekday, str):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 # Test known weekday
                 known_date = safely_call_function(self.module_obj, "get_day_of_week", "2025-03-19")
                 if known_date is None or not isinstance(known_date, str) or known_date != "Wednesday":
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
             # SECTION 5: TIMEZONE CONVERSION BOUNDARY TESTS
             if check_function_exists(self.module_obj, "convert_timezone"):
                 # Test same offsets
@@ -261,7 +261,7 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 # Test maximum timezone difference
                 max_diff = safely_call_function(self.module_obj, "convert_timezone", dt, -12, 14)
                 if max_diff is None or not isinstance(max_diff, datetime):
@@ -273,7 +273,7 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 # Test string input handling
                 string_tz = safely_call_function(self.module_obj, "convert_timezone", "2025-03-19 12:00:00", -5, -8)
                 if string_tz is None or not isinstance(string_tz, datetime):
@@ -285,7 +285,7 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 # Test crossing date boundary
                 late_time = datetime(2025, 3, 19, 23, 30)
                 cross_date = safely_call_function(self.module_obj, "convert_timezone", late_time, -8, 3)
@@ -293,7 +293,7 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
             # SECTION 6: FORMAT DATETIME BOUNDARY TESTS
             if check_function_exists(self.module_obj, "format_datetime"):
                 # Test default format
@@ -303,14 +303,14 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 # Test custom format
                 custom_format = safely_call_function(self.module_obj, "format_datetime", dt, "%B %d, %Y at %I:%M %p")
                 if custom_format is None or not isinstance(custom_format, str) or "March" not in custom_format:
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 # Test edge date formatting
                 edge_date = datetime(1, 1, 1, 0, 0, 0)
                 edge_format = safely_call_function(self.module_obj, "format_datetime", edge_date, "%Y-%m-%d")
@@ -318,7 +318,7 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
             # SECTION 7: ADDITIONAL EDGE CASES
             if check_function_exists(self.module_obj, "convert_string_to_datetime"):
                 # Test century and millennium boundaries
@@ -327,13 +327,13 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
                 millennium_boundary = safely_call_function(self.module_obj, "convert_string_to_datetime", "1000-01-01")
                 if millennium_boundary is None or millennium_boundary.year != 1000:
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
             # Test time precision boundaries
             if check_function_exists(self.module_obj, "calculate_date_difference"):
                 precise_start = datetime(2025, 3, 19, 12, 0, 0)
@@ -343,14 +343,14 @@ class TestBoundaryConditions(unittest.TestCase):
                     self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
                     print("TestBoundaryConditionsComprehensive = Failed")
                     return
-
+ 
             # All tests passed
             self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", True, "boundary")
             print("TestBoundaryConditionsComprehensive = Passed")
-
+ 
         except Exception as e:
             self.test_obj.yakshaAssert("TestBoundaryConditionsComprehensive", False, "boundary")
             print("TestBoundaryConditionsComprehensive = Failed")
-
+ 
 if __name__ == '__main__':
     unittest.main()
